@@ -1,0 +1,157 @@
+$def with (ctx,param={},pagedata={})
+$code:
+    realhome = ctx.get('realhome','')
+    datalist = pagedata['datalist']
+    pag_size = param.get('pagsz',5)
+    pag_totl = param.get('pagtl',int(pagedata['datasize']/5.0+1))
+    pag_curr = param.get('pagno',1)
+
+<script type="text/javascript">
+function PageInit() {
+    jQuery("#canmodiusers").select2({tags: getUsersForTagInput()});
+}
+function delAction(id) {
+    if (id && id != "") {
+        if (confirm("确定要删除这篇文章吗？")) {
+            jQuery.ajax({
+                type: "DELETE",
+                url: "$realhome/x/wiki/rst/art?id="+id,
+                async: false,
+                success: function(json) {
+                    json = JSON.parse(json);
+                    if (json.ERROR) {
+                        alert(json.ERROR)
+                    } else {
+                        alert('删除成功！');
+                        location.reload();
+                    }
+                }
+            });
+        }
+    }
+}
+function showModiusers(id) {
+    jQuery('#ART_ID').val(id);
+    var users = '';
+    jQuery.ajax({
+        type: "GET",
+        url: "$realhome/x/wiki/rst/modiusers",
+        data: { "ART_ID": id },
+        async: false,
+        error: ajaxErrorHandle,
+        success: function(json) {
+            users = json;
+            var arrayIdValue = [];
+            var userData2 = $:json_string(ctx['usersession']['userlist'] or []);
+            for (var k=0; k<userData2.length; k++) {
+                if (users.indexOf(userData2[k][0])>=0) {
+                    arrayIdValue.push({id: userData2[k][0], text: userData2[k][0]+'-'+userData2[k][1]});
+                }
+            }
+            jQuery("#canmodiusers").select2("data", arrayIdValue);
+        }
+    });
+    jQuery('#div_modal_canmodiusers').modal('show');
+}
+function mdlsel_savecanmodiusers() {
+    jQuery.ajax({
+        type: "POST",
+        url: "$realhome/x/wiki/rst/modiusers",
+        data: { "ART_ID": jQuery('#ART_ID').val(), "canmodiusers":jQuery("#canmodiusers").val() },
+        async: false,
+        error: ajaxErrorHandle,
+        success: function(json) {
+            alert(json); //完成后提示
+        }
+    });
+}
+</script>
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12 blog-page">
+            <div class="row-fluid">
+                <div class="span9 article-block">
+                $for artldata in datalist:
+                    <div class="row-fluid">
+                        <div class="span12 blog-article">
+                            <h2><a href="$realhome/x/wiki/wkv2?id=$artldata['ART_ID']">$artldata['ART_TITLE']</a></h2>
+                            <div class="blog-img blog-tag-data">
+                                <div class="span6">
+                                    <a href="$realhome/x/wiki/wkv1?id=$artldata['ART_ID']">只看正文</a>
+                                    <ul class="unstyled inline blog-tags">
+                                        <li>
+                                            <i class="icon-tags"></i>
+                                        $for tag in artldata.get('ART_KEYWORDS','').split(' '):
+                                            <a href="$realhome/x/wiki/wklist?tag=$tag">$tag</a>
+                                        </li>
+                                    </ul>
+                                    <ul class="unstyled inline blog-tags">
+                                        <li><i class="icon-eye-open"></i> $artldata.get('MATCH_TIMES',0)
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="span6 blog-tag-data-inner">
+                                    <ul class="unstyled inline">
+                                        $if artldata.get('CAN_DEL',False):
+                                            <li><a href="javascript:showModiusers('$artldata.get('ART_ID','')')" class="tooltips" data-original-title="$artldata.get('CANMODI_NAMES','')"><i class="icon-group"></i> 权限</a></li>
+                                            <li><a href="javascript:delAction('$artldata.get('ART_ID','')')"><i class="icon-trash"></i> 删除</a></li>
+                                        $if artldata.get('CAN_MODI',False):
+                                            <li><a href="$realhome/x/wiki/wkedit?id=$artldata.get('ART_ID','')"><i class="icon-edit"></i> 编辑</a></li>
+                                        <li><i class="icon-user"></i> $artldata['UPDATE_USER'] </li>
+                                        <li><i class="icon-calendar"></i> $artldata['UPDATE_TIME'] </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <p>$cut_length(artldata['ART_CONTENT'],200)</p>
+                        </div>
+                    </div>
+                    <hr style="margin-top: 0px !important">
+                </div>
+                <!--end span9-->
+                $:pagedata['sidepage'](ctx,param,pagedata)
+            </div>
+            <div class="pagination">
+                <ul>
+                $if pag_curr==1:
+                    <li class="active"><a href="#">上一页</a></li>
+                $else:
+                    <li><a href="$realhome/x/wiki/wklist?tag=$param.get('tag','')&qry=$param.get('qry','')&pagno=$(pag_curr-1)">上一页</a></li>
+                $for i in range(1,pag_totl+1):
+                    $if pag_curr==i:
+                        <li class="active"><a href="#">$i</a></li>
+                    $else:
+                        <li><a href="$realhome/x/wiki/wklist?tag=$param.get('tag','')&qry=$param.get('qry','')&pagno=$i">$i</a></li>
+                $if pag_curr==pag_totl:
+                    <li class="active"><a href="#">下一页</a></li>
+                $else:
+                    <li><a href="$realhome/x/wiki/wklist?tag=$param.get('tag','')&qry=$param.get('qry','')&pagno=$(pag_curr+1)">下一页</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="div_modal_canmodiusers" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModal_canmodiusers" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+        <h3 id="myModal_canmodiusers">设置文章可修改人</h3>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" id="form_canmodiusers">
+            <div class="row-fluid">
+                <div class="control-group">
+                    <label class="control-label-small">可修改人</label>
+                    <div class="controls-large">
+                        <input type="hidden" id="ART_ID" name="ART_ID" />
+                        <input type="text" class="span11 m-wrap select2" id="canmodiusers" name="canmodiusers" />
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn blue" data-dismiss="modal" onclick="javascript:mdlsel_savecanmodiusers();">确定</button>
+        <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+    </div>
+</div>
