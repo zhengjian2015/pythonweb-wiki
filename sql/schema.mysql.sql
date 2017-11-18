@@ -1,0 +1,42 @@
+/* 知识库文章 */
+DROP TABLE IF EXISTS WK_ARTICLES;
+CREATE TABLE WK_ARTICLES(
+    ART_ID          VARCHAR(40)  NOT NULL   COMMENT '主键ID',
+    ART_TITLE       NVARCHAR(60) NOT NULL   COMMENT '文章标题',
+    ART_KEYWORDS    NVARCHAR(200)           COMMENT '关键字',
+    ART_CONTENT     MEDIUMTEXT              COMMENT '内容，Markdown格式',
+    CREATE_USER     VARCHAR(40)  NOT NULL   COMMENT '创建人',
+    CREATE_TIME     DATETIME,
+    UPDATE_USER     VARCHAR(40)             COMMENT '修改人',
+    UPDATE_TIME     DATETIME,
+    STATUS          SMALLINT NOT NULL DEFAULT 0 COMMENT '状态 0正常 1删除',
+    MATCH_TIMES     INT NOT NULL DEFAULT 0  COMMENT '被检索到的次数',
+    SUPPORT_TIMES   INT                     COMMENT '支持次数（表示该信息有用）',
+    OPPOSE_TIMES    INT                     COMMENT '反对次数（表示该信息无用）',
+    CANMODI_USERS   VARCHAR(800)            COMMENT '可修改用户',
+    CONSTRAINT PRI_WK_ARTICLES PRIMARY KEY (ART_ID)
+);
+
+/* 图片 */
+DROP TABLE IF EXISTS WK_IMAGES;
+CREATE TABLE WK_IMAGES(
+    IMG_ID          VARCHAR(40) NOT NULL    COMMENT '主键ID',
+    FILENAME        VARCHAR(100)            COMMENT '文件名',
+    FILESIZE        INT                     COMMENT '文件大小字节数',
+    CREATE_USER     VARCHAR(40) NOT NULL    COMMENT '创建人',
+    CREATE_TIME     DATETIME,
+    FILEDATA        MEDIUMTEXT              COMMENT '文件内容BASE64编码',
+    CONSTRAINT PK_WK_IMAGES PRIMARY KEY (IMG_ID)
+);
+
+/* 文件附件 */
+DROP TABLE IF EXISTS WK_ATTACHS;
+CREATE TABLE WK_ATTACHS(
+    ATT_ID          VARCHAR(40) NOT NULL    COMMENT '主键ID',
+    FILENAME        VARCHAR(100)            COMMENT '文件名',
+    FILESIZE        INT                     COMMENT '文件大小字节数',
+    CREATE_USER     VARCHAR(40) NOT NULL    COMMENT '创建人',
+    CREATE_TIME     DATETIME,
+    FILEDATA        MEDIUMTEXT              COMMENT '文件内容BASE64编码',
+    CONSTRAINT PK_WK_ATTACHS PRIMARY KEY (ATT_ID)
+);

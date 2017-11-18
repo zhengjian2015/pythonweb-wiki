@@ -10,5 +10,40 @@ $code:
         <a class="btn" href="$realhome/x/wiki/wkedit"><i class="icon-plus"></i> 新建文章</a>
         <a class="btn" href="$realhome/f/v/objlist?clsid=e65f8985d221442dab43370f722affc0" title="管理图片"><i class="icon-instagram"></i></a>
     </div>
+    <h3>搜索</h3>
+    <div class="">
+        <form action="$realhome/x/wiki/wklist" method="GET">
+            <input class="m-wrap" type="text" style="box-sizing:content-box;height: 23px" id="qry" name="qry" value="$param.get('qry','')">
+            <input type="hidden" id="tag" name="tag" value="$param.get('tag','')">
+            <button type="submit" class="btn" style="height: 30px;padding-bottom: 5px;padding-left: 12px;padding-right: 12px;padding-top: 5px;">
+                <i class="icon-search"></i>
+            </button>
+        </form>
+    </div>
+    $if pagedata.has_key('hotart'):
+        <h3>热门文章</h3>
+        <div class="blog-twitter">
+        $for x in pagedata['hotart']:
+            <div class="blog-twitter-block">
+                <a href="$realhome/x/wiki/wkv2?id=$x['ART_ID']">$x['ART_TITLE']</a>
+                <span>$x['UPDATE_TIME']</span>
+                <i class="icon-file blog-twiiter-icon"></i>
+            </div>
+        </div>
+    $if pagedata.has_key('relateart'):
+        <h3>相关文章</h3>
+        <div class="blog-twitter">
+        $for x in pagedata['relateart']:
+            <div class="blog-twitter-block">
+                <a href="$realhome/x/wiki/wkv2?id=$x['ART_ID']">$x['ART_TITLE']</a>
+                <span>$x['UPDATE_TIME']</span>
+                <i class="icon-file blog-twiiter-icon"></i>
+            </div>
+        </div>
+    <h3>Tags</h3>
+    <ul class="unstyled inline sidebar-tags">
+    $for x in pagedata['keywords'][:14]:
+        <li><a href="$realhome/x/wiki/wklist?tag=$x[0]"><i class="icon-tags"></i> $x[0]</a></li>
+    </ul>
 </div>
 <!--end span3-->

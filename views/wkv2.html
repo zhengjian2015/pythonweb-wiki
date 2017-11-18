@@ -52,6 +52,11 @@ $code:
     }
 </style>
 
+<div class="side-catalog" id="catalog">
+    <div class="markdown-body editormd-preview-container catalog-scroller" id="custom-toc-container"></div>
+    <div style="float:right;"><a href="javascript:showOrHideCatalog();" class="btn" style="text-decoration: none;" id="btnSwitch">隐藏目录</a></div>
+</div>
+
 <div class="container-fluid" style="text-align: left">
     <div class="row-fluid">
         <div class="span12 blog-page">
@@ -78,15 +83,12 @@ $code:
                                 </div>
                                 <div class="span6 blog-tag-data-inner">
                                     <ul class="unstyled inline">
-                                        <li>
-                                            <a href="$realhome/x/wiki/wkedit?id=$artldata.get('ART_ID','')"><i class="icon-edit"></i> 编辑</a>
+                                        $if artldata.get('CAN_MODI',False):
+                                            <li><a href="$realhome/x/wiki/wkedit?id=$artldata.get('ART_ID','')"><i class="icon-edit"></i> 编辑</a></li>
+                                        <li><i class="icon-user"></i> $artldata.get('CREATE_NAME','')<BR>
+                                            <i class="icon-user-md"></i> $artldata.get('UPDATE_NAME','')
                                         </li>
-                                        <li>
-                                            <i class="icon-user"></i> $artldata.get('CREATE_USER','')<BR>
-                                            <i class="icon-user-md"></i> $artldata.get('UPDATE_USER','')
-                                        </li>
-                                        <li>
-                                            <i class="icon-calendar"></i> $artldata.get('CREATE_TIME','')<BR>
+                                        <li><i class="icon-calendar"></i> $artldata.get('CREATE_TIME','')<BR>
                                             <i class="icon-calendar"></i> $artldata.get('UPDATE_TIME','')
                                         </li>
                                     </ul>
@@ -99,18 +101,16 @@ $code:
                        <textarea style="display:none;" name="test-editormd-markdown-doc"></textarea>
                     </div>
                 </div>
-                <!-- 嵌套wikiside页面 -->
                 $:pagedata['sidepage'](ctx,param,pagedata)
             </div>
         </div>
     </div>
 </div>
 
-
 <script type="text/javascript">
-	var testEditormdView;
-	
-	function PageInit() {
+    var testEditormdView;
+
+    function PageInit() {
         testEditormdView = editormd.markdownToHTML("test-editormd-view", {
             markdown        : jQuery('#ART_CONTENT').val(),
             htmlDecode      : "style,script,iframe",  // you can filter tags decode
@@ -126,4 +126,13 @@ $code:
             tocDropdown   : false
         });
     };
+    function showOrHideCatalog() {
+        if (jQuery('#catalog').css("height")=='456px') {
+            jQuery('#catalog').css("height",'0px');
+            jQuery('#btnSwitch').text('显示目录')
+        } else {
+            jQuery('#catalog').css("height",'456px')
+            jQuery('#btnSwitch').text('隐藏目录')
+        }
+    }
 </script>

@@ -66,7 +66,6 @@ function mdlsel_savecanmodiusers() {
     });
 }
 </script>
-
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span12 blog-page">
@@ -98,7 +97,7 @@ function mdlsel_savecanmodiusers() {
                                             <li><a href="javascript:delAction('$artldata.get('ART_ID','')')"><i class="icon-trash"></i> 删除</a></li>
                                         $if artldata.get('CAN_MODI',False):
                                             <li><a href="$realhome/x/wiki/wkedit?id=$artldata.get('ART_ID','')"><i class="icon-edit"></i> 编辑</a></li>
-                                        <li><i class="icon-user"></i> $artldata['UPDATE_USER'] </li>
+                                        <li><i class="icon-user"></i> $artldata['UPDATE_NAME'] </li>
                                         <li><i class="icon-calendar"></i> $artldata['UPDATE_TIME'] </li>
                                     </ul>
                                 </div>
